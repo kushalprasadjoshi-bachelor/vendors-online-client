@@ -1,0 +1,9 @@
+.dynamic-x-padding {
+  padding-left: 4rem !important;
+  padding-right: 4rem !important;
+}
+
+/* CSS to check the container size */
+.check {
+  border: 2px solid red;
+}
