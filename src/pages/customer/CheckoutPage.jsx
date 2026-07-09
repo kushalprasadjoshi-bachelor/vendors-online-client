@@ -9,6 +9,7 @@ import { orderService } from '../../services/orderService'
 import { currency } from '../../utils/formatters'
 
 const CheckoutPage = () => {
+  const { user } = useAuth()
   const { clearCart, items, summary } = useCart()
   const [createdOrder, setCreatedOrder] = useState(null)
 
@@ -16,7 +17,7 @@ const CheckoutPage = () => {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
     const order = await orderService.createOrder(createOrderDto({
-      customerId: 'user_customer_001',
+      customerId: user ? user.id : 'user_customer_001',
       storeId: items[0]?.storeId || 'store_001',
       items,
       ...summary,

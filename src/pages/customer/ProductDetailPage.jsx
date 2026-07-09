@@ -1,33 +1,58 @@
 import { CheckCircle, Minus, Plus, SlidersHorizontal } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Breadcrumbs from '../../components/common/Breadcrumbs'
 import ProductCard from '../../components/common/ProductCard'
 import SectionHeader from '../../components/common/SectionHeader'
 import Stars from '../../components/common/Stars'
 import { routes, storePath } from '../../config/routes'
-import { products, reviews, stores } from '../../data/mockData'
 import { useCart } from '../../plugins/cartContext'
+import { catalogService } from '../../services/catalogService'
 import { currency, dateLabel } from '../../utils/formatters'
 
 const ProductDetailPage = () => {
   const { storeSlug, productSlug } = useParams()
-  const product = products.find((item) => item.slug === productSlug) || products[0]
-  const store = stores.find((item) => item.slug === storeSlug) || stores[0]
-  const productReviews = reviews.filter((review) => review.productId === product.id)
-  const related = products.filter((item) => item.id !== product.id).slice(0, 4)
-  const [image, setImage] = useState(product.images[0])
-  const [color, setColor] = useState(product.colors[0])
-  const [size, setSize] = useState(product.sizes[2] || product.sizes[0])
+  const [product, setProduct] = useState(null)
+  const [store, setStore] = useState(null)
+  const [productReviews, setProductReviews] = useState([])
+  const [related, setRelated] = useState([])
+  const [image, setImage] = useState('')
+  const [color, setColor] = useState('')
+  const [size, setSize] = useState('')
   const [quantity, setQuantity] = useState(1)
   const { addToCart } = useCart()
 
+  useEffect(() => {
+    if (productSlug && storeSlug) {
+      catalogService.getProductBySlug(productSlug)
+        .then((prod) => {
+          setProduct(prod)
+          setImage(prod.images[0] || '')
+          
+          const colorsList = prod.colors && prod.colors.length ? prod.colors : ['#000000', '#2563EB', '#EF4444']
+          const sizesList = prod.sizes && prod.sizes.length ? prod.sizes : ['S', 'M', 'L', 'XL']
+          setColor(colorsList[0])
+          setSize(sizesList[1] || sizesList[0])
+
+          catalogService.getProductReviews(prod.id).then(setProductReviews).catch(console.error)
+
+          catalogService.getProducts().then((allProds) => {
+            setRelated(allProds.filter((item) => item.id !== prod.id).slice(0, 4))
+          }).catch(console.error)
+        })
+        .catch(console.error)
+
+      catalogService.getStoreBySlug(storeSlug).then(setStore).catch(console.error)
+    }
+  }, [productSlug, storeSlug])
+
   const discountLabel = useMemo(() => {
-    if (!product.discountPercent) return null
+    if (!product || !product.discountPercent) return null
     return `-${product.discountPercent}%`
-  }, [product.discountPercent])
+  }, [product])
 
   const handleAddToCart = () => {
+    if (!product) return
     addToCart({
       productId: product.id,
       storeId: product.storeId,
@@ -39,6 +64,17 @@ const ProductDetailPage = () => {
       quantity,
     })
   }
+
+  if (!product || !store) {
+    return (
+      <section className="container-shell product-detail-page">
+        <p>Loading product...</p>
+      </section>
+    )
+  }
+
+  const colorsList = product.colors && product.colors.length ? product.colors : ['#000000', '#2563EB', '#EF4444']
+  const sizesList = product.sizes && product.sizes.length ? product.sizes : ['S', 'M', 'L', 'XL']
 
   return (
     <section className="container-shell product-detail-page">
@@ -83,7 +119,7 @@ const ProductDetailPage = () => {
           <div className="product-option-block">
             <span>Select Colors</span>
             <div className="swatch-row">
-              {product.colors.map((item) => (
+              {colorsList.map((item) => (
                 <button
                   className={item === color ? 'active' : ''}
                   style={{ backgroundColor: item }}
@@ -101,7 +137,7 @@ const ProductDetailPage = () => {
           <div className="product-option-block">
             <span>Choose Size</span>
             <div className="size-row">
-              {product.sizes.map((item) => (
+              {sizesList.map((item) => (
                 <button
                   className={item === size ? 'active' : ''}
                   type="button"
@@ -139,7 +175,7 @@ const ProductDetailPage = () => {
 
       <section className="reviews-section">
         <SectionHeader
-          title={`All Reviews (${product.reviewCount})`}
+          title={`All Reviews (${product.reviewCount || productReviews.length})`}
           action={(
             <div className="review-actions">
               <button className="icon-button" type="button" aria-label="Filter reviews"><SlidersHorizontal size={18} /></button>
@@ -152,7 +188,7 @@ const ProductDetailPage = () => {
           {productReviews.map((review) => (
             <article className="review-card" key={review.id}>
               <Stars rating={review.rating} showValue={false} />
-              <h3>{review.name} <CheckCircle size={16} /></h3>
+              <h3>{review.author || review.name} <CheckCircle size={16} /></h3>
               <p>“{review.comment}”</p>
               <span>Posted on {dateLabel(review.createdAt)}</span>
             </article>
@@ -172,4 +208,5 @@ const ProductDetailPage = () => {
 }
 
 export default ProductDetailPage
+
 
