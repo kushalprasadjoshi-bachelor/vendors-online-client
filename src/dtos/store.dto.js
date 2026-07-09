@@ -1,25 +1,30 @@
-import { slugify } from '../utils/slug'
+import { slugify } from "../utils/slug";
+
+const normalizeId = (value) =>
+  value && typeof value === "object" && typeof value.toString === "function"
+    ? value.toString()
+    : String(value ?? "");
 
 export const createStoreDto = ({
-  id = '',
-  name = '',
-  ownerId = '',
-  slug = '',
-  city = '',
-  country = 'Nepal',
-  description = '',
+  id = "",
+  name = "",
+  ownerId = "",
+  slug = "",
+  city = "",
+  country = "Nepal",
+  description = "",
   rating = 0,
   reviewCount = 0,
-  imageUrl = '',
-  bannerUrl = '',
+  imageUrl = "",
+  bannerUrl = "",
   categories = [],
-  status = 'active',
+  status = "active",
   createdAt = new Date().toISOString(),
 } = {}) => ({
-  id,
+  id: normalizeId(id),
   name: name.trim(),
-  ownerId,
-  slug: slug || slugify(name),
+  ownerId: normalizeId(ownerId),
+  slug: normalizeId(slug || slugify(name)),
   city,
   country,
   description,
@@ -30,5 +35,4 @@ export const createStoreDto = ({
   categories,
   status,
   createdAt,
-})
-
+});

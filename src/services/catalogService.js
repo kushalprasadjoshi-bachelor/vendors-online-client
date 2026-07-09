@@ -1,63 +1,71 @@
-import { apiClient } from './apiClient'
-import { createStoreDto } from '../dtos/store.dto'
-import { createProductDto } from '../dtos/product.dto'
+import { apiClient } from "./apiClient";
+import { createStoreDto } from "../dtos/store.dto";
+import { createProductDto } from "../dtos/product.dto";
 
 export const catalogService = {
   async getStores() {
-    const list = await apiClient.get('/shop')
-    return list.map(item => createStoreDto({
-      id: item._id,
-      name: item.name,
-      ownerId: item.vendorId,
-      slug: item._id,
-      description: item.description,
-      categories: [item.category],
-      bannerUrl: item.banner,
-    }))
+    const list = await apiClient.get("/shop");
+    return list.map((item) =>
+      createStoreDto({
+        id: item._id || item.id,
+        name: item.name,
+        ownerId: item.vendorId,
+        slug: item._id || item.id,
+        description: item.description,
+        categories: [item.category],
+        bannerUrl: item.banner,
+        imageUrl: item.banner,
+      }),
+    );
   },
 
   async getStoreBySlug(slug) {
-    const item = await apiClient.get(`/shop/${slug}`)
+    const item = await apiClient.get(`/shop/${slug}`);
     return createStoreDto({
-      id: item._id,
+      id: item._id || item.id,
       name: item.name,
       ownerId: item.vendorId,
-      slug: item._id,
+      slug: item._id || item.id,
       description: item.description,
       categories: [item.category],
       bannerUrl: item.banner,
-    })
+      imageUrl: item.banner,
+    });
   },
 
   async getProducts(storeSlug = null) {
-    const url = storeSlug ? `/shop/product/shop/${storeSlug}` : '/shop/product'
-    const list = await apiClient.get(url)
-    return list.map(item => createProductDto({
-      id: item._id,
-      storeId: item.shopId,
-      storeSlug: item.shopId,
-      name: item.name,
-      slug: item._id,
-      description: item.description,
-      price: item.price,
-      stock: item.stock,
-      images: item.images,
-    }))
+    const url = storeSlug ? `/shop/product/shop/${storeSlug}` : "/shop/product";
+    const list = await apiClient.get(url);
+    return list.map((item) =>
+      createProductDto({
+        id: item._id || item.id,
+        storeId: item.shopId,
+        storeSlug: item.shopId,
+        name: item.name,
+        slug: item._id || item.id,
+        description: item.description,
+        price: item.price,
+        stock: item.stock,
+        images: item.images,
+        imageUrl: item.images?.[0] || "",
+      }),
+    );
   },
 
   async getProductBySlug(productSlug) {
-    const item = await apiClient.get(`/shop/product/${productSlug}`)
+    const item = await apiClient.get(`/shop/product/${productSlug}`);
     return createProductDto({
-      id: item._id,
+      id: item._id || item.id,
       storeId: item.shopId,
       storeSlug: item.shopId,
       name: item.name,
-      slug: item._id,
+      slug: item._id || item.id,
       description: item.description,
       price: item.price,
       stock: item.stock,
       images: item.images,
-    })
+      imageUrl: item.images?.[0] || "",
+    });
   },
 
   async getProductReviews(productId) {
@@ -66,19 +74,19 @@ export const catalogService = {
       {
         id: `rev_1_${productId}`,
         productId,
-        author: 'Prashant Subedi',
+        author: "Prashant Subedi",
         rating: 5,
-        comment: 'Excellent product! Extremely satisfied with the quality.',
+        comment: "Excellent product! Extremely satisfied with the quality.",
         createdAt: new Date(Date.now() - 86400000).toISOString(),
       },
       {
         id: `rev_2_${productId}`,
         productId,
-        author: 'Sita Devkota',
+        author: "Sita Devkota",
         rating: 4,
-        comment: 'Good product. Decent shipping time.',
+        comment: "Good product. Decent shipping time.",
         createdAt: new Date(Date.now() - 172800000).toISOString(),
-      }
-    ]
+      },
+    ];
   },
-}
+};

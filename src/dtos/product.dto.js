@@ -1,13 +1,18 @@
-import { slugify } from '../utils/slug'
+import { slugify } from "../utils/slug";
+
+const normalizeId = (value) =>
+  value && typeof value === "object" && typeof value.toString === "function"
+    ? value.toString()
+    : String(value ?? "");
 
 export const createProductDto = ({
-  id = '',
-  storeId = '',
-  storeSlug = '',
-  name = '',
-  slug = '',
-  category = '',
-  description = '',
+  id = "",
+  storeId = "",
+  storeSlug = "",
+  name = "",
+  slug = "",
+  category = "",
+  description = "",
   price = 0,
   compareAtPrice = null,
   discountPercent = 0,
@@ -17,14 +22,14 @@ export const createProductDto = ({
   colors = [],
   sizes = [],
   images = [],
-  status = 'active',
+  status = "active",
   createdAt = new Date().toISOString(),
 } = {}) => ({
-  id,
-  storeId,
-  storeSlug,
+  id: normalizeId(id),
+  storeId: normalizeId(storeId),
+  storeSlug: normalizeId(storeSlug),
   name: name.trim(),
-  slug: slug || slugify(name),
+  slug: normalizeId(slug || slugify(name)),
   category,
   description,
   price,
@@ -38,5 +43,4 @@ export const createProductDto = ({
   images,
   status,
   createdAt,
-})
-
+});
