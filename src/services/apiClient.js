@@ -12,13 +12,27 @@ const request = async (path, options = {}) => {
     },
   })
 
+  let data = null
+  if (response.status !== 204) {
+    try {
+      data = await response.json()
+    } catch (e) {
+      // Ignore parsing errors for non-JSON responses
+    }
+  }
+
   if (!response.ok) {
-    const message = await response.text()
-    throw new Error(message || 'Request failed')
+    const errorMsg = data && data.message ? data.message : 'Request failed'
+    throw new Error(errorMsg)
   }
 
   if (response.status === 204) return null
-  return response.json()
+
+  if (data && data.success === false) {
+    throw new Error(data.message || 'Request failed')
+  }
+
+  return data && data.result !== undefined ? data.result : data
 }
 
 export const apiClient = {
