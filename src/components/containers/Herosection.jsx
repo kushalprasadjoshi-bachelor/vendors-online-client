@@ -1,4 +1,16 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { routes } from '../../config/routes'
+import { catalogService } from '../../services/catalogService'
+import { numberCompact } from '../../utils/formatters'
+
 const Herosection = () => {
+  const [stats, setStats] = useState({ vendors: 0, products: 0, customers: 0 })
+
+  useEffect(() => {
+    catalogService.getStats().then(setStats).catch(console.error)
+  }, [])
+
   return (
     <section className="hero-section">
       <div className="hero-content">
@@ -8,13 +20,13 @@ const Herosection = () => {
           designed to bring out your daily needs down to your doorstep just in a single click.
         </p>
         <div className="hero-buttons">
-          <a className="btn btn-dark" href="/stores/sagarmatha-store">Shop Now</a>
-          <a className="btn btn-dark" href="/stores">Stores</a>
+          <Link className="btn btn-dark" to={routes.products}>Shop Now</Link>
+          <Link className="btn btn-dark" to={routes.stores}>Stores</Link>
         </div>
         <div className="hero-stats" aria-label="Marketplace statistics">
-          <span><strong>200+</strong> National Vendors</span>
-          <span><strong>2,000+</strong> High-Quality Products</span>
-          <span><strong>30,000+</strong> Happy Customers</span>
+          <span><strong>{numberCompact(stats.vendors)}</strong> National Vendors</span>
+          <span><strong>{numberCompact(stats.products)}</strong> High-Quality Products</span>
+          <span><strong>{numberCompact(stats.customers)}</strong> Happy Customers</span>
         </div>
       </div>
 

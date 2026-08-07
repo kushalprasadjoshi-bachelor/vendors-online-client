@@ -43,9 +43,12 @@ const CheckoutPage = () => {
           <ShieldCheck size={42} />
           <h1>Order placed in escrow</h1>
           <p>
-            Order {createdOrder.id} is waiting for vendor processing. Delivery
-            OTP: <strong>{createdOrder.otpCode}</strong>
+            Order {createdOrder.id} is waiting for vendor processing.
           </p>
+          <div className="otp-alert success-otp">
+            <span>Delivery OTP</span>
+            <strong>{createdOrder.otpCode}</strong>
+          </div>
           <Link className="btn btn-dark" to={routes.orders}>
             View Orders
           </Link>

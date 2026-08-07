@@ -1,5 +1,6 @@
 import { storage } from '../utils/storage'
 import { apiClient } from './apiClient'
+import { catalogService } from './catalogService'
 
 export const orderService = {
   async getOrders() {
@@ -9,9 +10,8 @@ export const orderService = {
     if (user.role === 'customer') {
       return apiClient.get(`/order/customer/${user.id}`)
     } else if (user.role === 'vendor') {
-      // Find shop owned by vendor
-      const shops = await apiClient.get(`/shop/vendor/${user.id}`)
-      const shopId = shops[0]?._id || shops[0]?.id
+      const shops = await catalogService.getVendorStores(user.id)
+      const shopId = shops[0]?.id
       if (shopId) {
         return apiClient.get(`/order/shop/${shopId}`)
       }
@@ -48,7 +48,23 @@ export const orderService = {
     return apiClient.post('/dispute', dto)
   },
 
+  async updateDispute(disputeId, dto) {
+    return apiClient.patch(`/dispute/${disputeId}`, dto)
+  },
+
   async updateDisputeStatus(disputeId, status) {
     return apiClient.patch(`/dispute/${disputeId}`, { status })
+  },
+
+  async deleteDispute(disputeId) {
+    return apiClient.delete(`/dispute/${disputeId}`)
+  },
+
+  async updateTransaction(transactionId, dto) {
+    return apiClient.patch(`/transaction/${transactionId}`, dto)
+  },
+
+  async deleteTransaction(transactionId) {
+    return apiClient.delete(`/transaction/${transactionId}`)
   },
 }

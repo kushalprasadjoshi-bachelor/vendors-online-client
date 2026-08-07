@@ -1,6 +1,8 @@
 export const routes = {
   home: '/',
   stores: '/stores',
+  products: '/products',
+  search: '/search',
   cart: '/cart',
   checkout: '/checkout',
   orders: '/orders',
@@ -14,6 +16,8 @@ export const routes = {
   adminUsers: '/admin/users',
   adminDisputes: '/admin/disputes',
   adminTransactions: '/admin/transactions',
+  adminSettings: '/admin/settings',
+  adminSecurity: '/admin/security',
 }
 
 export const storePath = (storeSlug) => `/stores/${storeSlug}`
@@ -21,4 +25,3 @@ export const storePath = (storeSlug) => `/stores/${storeSlug}`
 export const productPath = (storeSlug, productSlug) => (
   `/stores/${storeSlug}/products/${productSlug}`
 )
-

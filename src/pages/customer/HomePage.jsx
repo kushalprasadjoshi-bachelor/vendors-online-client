@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Herosection from '../../components/containers/Herosection'
@@ -13,10 +13,16 @@ import { catalogService } from '../../services/catalogService'
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([])
   const [featuredStores, setFeaturedStores] = useState([])
+  const [websiteReviews, setWebsiteReviews] = useState(testimonials)
 
   useEffect(() => {
     catalogService.getProducts().then((prods) => setFeaturedProducts(prods.slice(0, 4))).catch(console.error)
     catalogService.getStores().then((sts) => setFeaturedStores(sts.slice(0, 4))).catch(console.error)
+    catalogService.getWebsiteReviews()
+      .then((reviews) => {
+        if (reviews.length) setWebsiteReviews(reviews.slice(0, 3))
+      })
+      .catch(console.error)
   }, [])
 
   return (
@@ -30,7 +36,7 @@ const HomePage = () => {
       <section className="container-shell page-section">
         <SectionHeader
           title="BUY PRODUCTS"
-          action={<Link className="pill-link" to={featuredStores[0] ? `/stores/${featuredStores[0].slug}` : routes.stores}>View All</Link>}
+          action={<Link className="pill-link" to={routes.products}>View All</Link>}
         />
         <div className="product-grid compact-grid">
           {featuredProducts.map((product) => <ProductCard product={product} key={product.id} />)}
@@ -52,7 +58,11 @@ const HomePage = () => {
           <h2>BROWSE BY LOCATION</h2>
           <div className="location-grid">
             {locations.map((location, index) => (
-              <Link className={`location-tile tile-${index + 1}`} to={routes.stores} key={location.name}>
+              <Link
+                className={`location-tile tile-${index + 1}`}
+                to={`${routes.stores}?location=${encodeURIComponent(location.name)}`}
+                key={location.name}
+              >
                 <img src={location.imageUrl} alt={location.name} loading="lazy" />
                 <span>{location.name}</span>
               </Link>
@@ -66,17 +76,17 @@ const HomePage = () => {
           title="OUR HAPPY CUSTOMERS"
           action={(
             <div className="arrow-actions" aria-label="Testimonials navigation">
-              <button type="button" aria-label="Previous testimonial">←</button>
-              <button type="button" aria-label="Next testimonial">→</button>
+              <button type="button" aria-label="Previous testimonial"><ArrowLeft size={18} /></button>
+              <button type="button" aria-label="Next testimonial"><ArrowRight size={18} /></button>
             </div>
           )}
         />
         <div className="testimonial-row">
-          {testimonials.map((testimonial) => (
+          {websiteReviews.map((testimonial) => (
             <article className="review-card" key={testimonial.id}>
               <Stars rating={testimonial.rating} showValue={false} />
-              <h3>{testimonial.name}</h3>
-              <p>“{testimonial.comment}”</p>
+              <h3>{testimonial.authorName || testimonial.name}</h3>
+              <p>"{testimonial.comment}"</p>
             </article>
           ))}
           <Link className="review-card testimonial-link" to={routes.stores}>
@@ -90,5 +100,3 @@ const HomePage = () => {
 }
 
 export default HomePage
-
-

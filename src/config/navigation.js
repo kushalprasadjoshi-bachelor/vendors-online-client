@@ -17,8 +17,8 @@ import { routes } from './routes'
 
 export const storefrontNav = [
   { label: 'Categories', path: routes.stores, icon: Boxes },
-  { label: 'On Sale', path: '/stores?sort=sale', icon: BadgeDollarSign },
-  { label: "What's New", path: '/stores?sort=new', icon: PackageCheck },
+  { label: 'On Sale', path: `${routes.products}?onSale=true`, icon: BadgeDollarSign },
+  { label: "What's New", path: `${routes.products}?sort=latest`, icon: PackageCheck },
   { label: 'Delivery', path: routes.orders, icon: Truck },
 ]
 
@@ -53,7 +53,6 @@ export const adminNav = [
   { label: 'Users', path: routes.adminUsers, icon: Users },
   { label: 'Disputes', path: routes.adminDisputes, icon: CircleHelp },
   { label: 'Transactions', path: routes.adminTransactions, icon: CreditCard },
-  { label: 'Settings', path: routes.admin, icon: Settings },
-  { label: 'Security', path: routes.admin, icon: ShieldCheck },
+  { label: 'Settings', path: routes.adminSettings, icon: Settings },
+  { label: 'Security', path: routes.adminSecurity, icon: ShieldCheck },
 ]
-

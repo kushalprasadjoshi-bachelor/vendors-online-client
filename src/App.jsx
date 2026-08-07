@@ -1,25 +1,29 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './App.css'
-import AdminLayout from './layouts/AdminLayout'
-import HomeLayout from './layouts/HomeLayout'
-import VendorLayout from './layouts/VendorLayout'
-import LoginPage from './pages/auth/LoginPage'
-import RegisterPage from './pages/auth/RegisterPage'
-import AdminDashboard from './pages/dashboard/AdminDashboard'
-import AdminDisputesPage from './pages/dashboard/AdminDisputesPage'
-import AdminTransactionsPage from './pages/dashboard/AdminTransactionsPage'
-import AdminUsersPage from './pages/dashboard/AdminUsersPage'
-import VendorDashboard from './pages/dashboard/VendorDashboard'
-import VendorOrdersPage from './pages/dashboard/VendorOrdersPage'
-import VendorProductsPage from './pages/dashboard/VendorProductsPage'
-import VendorStorePage from './pages/dashboard/VendorStorePage'
-import CartPage from './pages/customer/CartPage'
-import CheckoutPage from './pages/customer/CheckoutPage'
-import HomePage from './pages/customer/HomePage'
-import OrdersPage from './pages/customer/OrdersPage'
-import ProductDetailPage from './pages/customer/ProductDetailPage'
-import StoreProductsPage from './pages/customer/StoreProductsPage'
-import StoresPage from './pages/customer/StoresPage'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
+import AdminLayout from "./layouts/AdminLayout";
+import HomeLayout from "./layouts/HomeLayout";
+import VendorLayout from "./layouts/VendorLayout";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import AdminDisputesPage from "./pages/dashboard/AdminDisputesPage";
+import AdminSettingsPage from "./pages/dashboard/AdminSettingsPage";
+import AdminSecurityPage from "./pages/dashboard/AdminSecurityPage";
+import AdminTransactionsPage from "./pages/dashboard/AdminTransactionsPage";
+import AdminUsersPage from "./pages/dashboard/AdminUsersPage";
+import VendorDashboard from "./pages/dashboard/VendorDashboard";
+import VendorOrdersPage from "./pages/dashboard/VendorOrdersPage";
+import VendorProductsPage from "./pages/dashboard/VendorProductsPage";
+import VendorStorePage from "./pages/dashboard/VendorStorePage";
+import CartPage from "./pages/customer/CartPage";
+import CheckoutPage from "./pages/customer/CheckoutPage";
+import HomePage from "./pages/customer/HomePage";
+import OrdersPage from "./pages/customer/OrdersPage";
+import ProductDetailPage from "./pages/customer/ProductDetailPage";
+import SearchPage from "./pages/customer/SearchPage";
+import AllProductsPage from "./pages/customer/AllProductsPage";
+import StoreProductsPage from "./pages/customer/StoreProductsPage";
+import StoresPage from "./pages/customer/StoresPage";
 
 function App() {
   return (
@@ -29,10 +33,15 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="stores" element={<StoresPage />} />
           <Route path="stores/:storeSlug" element={<StoreProductsPage />} />
-          <Route path="stores/:storeSlug/products/:productSlug" element={<ProductDetailPage />} />
+          <Route
+            path="stores/:storeSlug/products/:productSlug"
+            element={<ProductDetailPage />}
+          />
           <Route path="cart" element={<CartPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="products" element={<AllProductsPage />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />
@@ -50,10 +59,12 @@ function App() {
           <Route path="users" element={<AdminUsersPage />} />
           <Route path="disputes" element={<AdminDisputesPage />} />
           <Route path="transactions" element={<AdminTransactionsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="security" element={<AdminSecurityPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
   )
 }
 
-export default App
+export default App;

@@ -1,3 +1,5 @@
+const rowKey = (row, index) => row.id || row._id || index
+
 const DataTable = ({ columns, rows }) => (
   <div className="table-shell">
     <table>
@@ -7,10 +9,10 @@ const DataTable = ({ columns, rows }) => (
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
-          <tr key={row.id}>
+        {rows.map((row, rowIndex) => (
+          <tr key={rowKey(row, rowIndex)}>
             {columns.map((column) => (
-              <td key={`${row.id}-${column.key}`}>
+              <td key={`${rowKey(row, rowIndex)}-${column.key}`}>
                 {column.render ? column.render(row) : row[column.key]}
               </td>
             ))}
@@ -22,4 +24,3 @@ const DataTable = ({ columns, rows }) => (
 )
 
 export default DataTable
-

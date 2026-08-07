@@ -6,9 +6,14 @@ import ProductCard from '../../components/common/ProductCard'
 import SectionHeader from '../../components/common/SectionHeader'
 import Stars from '../../components/common/Stars'
 import { routes, storePath } from '../../config/routes'
+import { useAuth } from '../../plugins/authContext'
 import { useCart } from '../../plugins/cartContext'
 import { catalogService } from '../../services/catalogService'
 import { currency, dateLabel } from '../../utils/formatters'
+
+const averageRating = (reviews) => (
+  reviews.length ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length : 0
+)
 
 const ProductDetailPage = () => {
   const { storeSlug, productSlug } = useParams()
@@ -20,21 +25,34 @@ const ProductDetailPage = () => {
   const [color, setColor] = useState('')
   const [size, setSize] = useState('')
   const [quantity, setQuantity] = useState(1)
+  const [reviewOpen, setReviewOpen] = useState(false)
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
+  const { user } = useAuth()
   const { addToCart } = useCart()
+
+  const refreshReviews = async (productId) => {
+    const reviews = await catalogService.getProductReviews(productId)
+    setProductReviews(reviews)
+    setProduct((current) => current ? {
+      ...current,
+      rating: averageRating(reviews),
+      reviewCount: reviews.length,
+    } : current)
+  }
 
   useEffect(() => {
     if (productSlug && storeSlug) {
       catalogService.getProductBySlug(productSlug)
         .then((prod) => {
           setProduct(prod)
-          setImage(prod.images[0] || '')
-          
+          setImage(prod.images[0] || prod.imageUrl || '')
+
           const colorsList = prod.colors && prod.colors.length ? prod.colors : ['#000000', '#2563EB', '#EF4444']
           const sizesList = prod.sizes && prod.sizes.length ? prod.sizes : ['S', 'M', 'L', 'XL']
           setColor(colorsList[0])
           setSize(sizesList[1] || sizesList[0])
 
-          catalogService.getProductReviews(prod.id).then(setProductReviews).catch(console.error)
+          refreshReviews(prod.id).catch(console.error)
 
           catalogService.getProducts().then((allProds) => {
             setRelated(allProds.filter((item) => item.id !== prod.id).slice(0, 4))
@@ -58,11 +76,35 @@ const ProductDetailPage = () => {
       storeId: product.storeId,
       name: product.name,
       price: product.price,
-      imageUrl: product.images[0],
+      imageUrl: product.images[0] || product.imageUrl,
       color,
       size,
       quantity,
     })
+  }
+
+  const handleReviewSubmit = async (event) => {
+    event.preventDefault()
+    if (!user) {
+      alert('Please login to write a product review.')
+      return
+    }
+
+    const form = new FormData(event.currentTarget)
+    setReviewSubmitting(true)
+    try {
+      await catalogService.addProductReview(product.id, {
+        rating: Number(form.get('rating')),
+        comment: form.get('comment'),
+      })
+      setReviewOpen(false)
+      event.currentTarget.reset()
+      await refreshReviews(product.id)
+    } catch (error) {
+      alert(error.message || 'Failed to submit review')
+    } finally {
+      setReviewSubmitting(false)
+    }
   }
 
   if (!product || !store) {
@@ -175,12 +217,12 @@ const ProductDetailPage = () => {
 
       <section className="reviews-section">
         <SectionHeader
-          title={`All Reviews (${product.reviewCount || productReviews.length})`}
+          title={`All Reviews (${productReviews.length})`}
           action={(
             <div className="review-actions">
               <button className="icon-button" type="button" aria-label="Filter reviews"><SlidersHorizontal size={18} /></button>
               <button className="sort-button" type="button">Latest</button>
-              <button className="btn btn-dark" type="button">Write a Review</button>
+              <button className="btn btn-dark" type="button" onClick={() => setReviewOpen(true)}>Write a Review</button>
             </div>
           )}
         />
@@ -188,13 +230,13 @@ const ProductDetailPage = () => {
           {productReviews.map((review) => (
             <article className="review-card" key={review.id}>
               <Stars rating={review.rating} showValue={false} />
-              <h3>{review.author || review.name} <CheckCircle size={16} /></h3>
-              <p>“{review.comment}”</p>
+              <h3>{review.authorName || review.name} <CheckCircle size={16} /></h3>
+              <p>"{review.comment}"</p>
               <span>Posted on {dateLabel(review.createdAt)}</span>
             </article>
           ))}
+          {productReviews.length === 0 && <p className="muted-line">No product reviews yet.</p>}
         </div>
-        <button className="pill-link centered" type="button">Load More Reviews</button>
       </section>
 
       <section className="page-section">
@@ -203,10 +245,36 @@ const ProductDetailPage = () => {
           {related.map((item) => <ProductCard product={item} key={item.id} />)}
         </div>
       </section>
+
+      {reviewOpen && (
+        <div className="modal-backdrop" role="presentation">
+          <div className="modal-panel" role="dialog" aria-modal="true" aria-label="Write product review">
+            <div className="modal-heading">
+              <h2>Review {product.name}</h2>
+              <button className="icon-button" type="button" onClick={() => setReviewOpen(false)} aria-label="Close review form">x</button>
+            </div>
+            <form className="form-grid single-column" onSubmit={handleReviewSubmit}>
+              <label>
+                Rating
+                <select name="rating" defaultValue="5" required>
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <option value={rating} key={rating}>{rating} stars</option>
+                  ))}
+                </select>
+              </label>
+              <label className="full">
+                Comment
+                <textarea name="comment" rows={4} required placeholder="Share your experience" />
+              </label>
+              <button className="btn btn-dark" type="submit" disabled={reviewSubmitting}>
+                {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 export default ProductDetailPage
-
-
