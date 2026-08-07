@@ -113,34 +113,51 @@ const AdminDisputesPage = () => {
       </section>
 
       {editingDispute && (
-        <div className="modal-backdrop" role="presentation">
-          <div className="modal-panel" role="dialog" aria-modal="true" aria-label="Edit dispute">
-            <div className="modal-heading">
-              <h2>Edit Dispute</h2>
-              <button className="icon-button" type="button" onClick={() => setEditingDispute(null)} aria-label="Close dispute form">x</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl shadow-slate-900/10">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Edit Dispute</h2>
+                <p className="mt-1 text-sm text-slate-500">Adjust the dispute details and save changes.</p>
+              </div>
+              <button className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900" type="button" onClick={() => setEditingDispute(null)} aria-label="Close dispute form">×</button>
             </div>
-            <form className="form-grid single-column" onSubmit={handleSave}>
-              <label>Reason<input name="reason" defaultValue={editingDispute.reason} required /></label>
-              <label>Amount<input name="amount" type="number" min="0" defaultValue={editingDispute.amount || 0} /></label>
-              <label>
-                Priority
-                <select name="priority" defaultValue={editingDispute.priority || 'medium'}>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
+            <form className="grid gap-4" onSubmit={handleSave}>
+              <label className="grid gap-2 text-sm font-medium text-slate-700">
+                Reason
+                <input name="reason" defaultValue={editingDispute.reason} required className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
               </label>
-              <label>
-                Status
-                <select name="status" defaultValue={editingDispute.status || 'open'}>
-                  <option value="open">Open</option>
-                  <option value="under_review">Under Review</option>
-                  <option value="resolved">Resolved</option>
-                </select>
+              <label className="grid gap-2 text-sm font-medium text-slate-700">
+                Amount
+                <input name="amount" type="number" min="0" defaultValue={editingDispute.amount || 0} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
               </label>
-              <label className="full">Description<textarea name="description" rows={3} defaultValue={editingDispute.description} /></label>
-              <label className="full">Admin Note<textarea name="adminNote" rows={3} defaultValue={editingDispute.adminNote} /></label>
-              <button className="btn btn-dark" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Dispute'}</button>
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="grid gap-2 text-sm font-medium text-slate-700">
+                  Priority
+                  <select name="priority" defaultValue={editingDispute.priority || 'medium'} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </label>
+                <label className="grid gap-2 text-sm font-medium text-slate-700">
+                  Status
+                  <select name="status" defaultValue={editingDispute.status || 'open'} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200">
+                    <option value="open">Open</option>
+                    <option value="under_review">Under Review</option>
+                    <option value="resolved">Resolved</option>
+                  </select>
+                </label>
+              </div>
+              <label className="grid gap-2 text-sm font-medium text-slate-700">
+                Description
+                <textarea name="description" rows={3} defaultValue={editingDispute.description} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              </label>
+              <label className="grid gap-2 text-sm font-medium text-slate-700">
+                Admin Note
+                <textarea name="adminNote" rows={3} defaultValue={editingDispute.adminNote} className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200" />
+              </label>
+              <button className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:pointer-events-none disabled:opacity-50" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Dispute'}</button>
             </form>
           </div>
         </div>

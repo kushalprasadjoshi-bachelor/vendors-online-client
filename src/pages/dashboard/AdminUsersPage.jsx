@@ -98,33 +98,53 @@ const AdminUsersPage = () => {
       </section>
 
       {editingUser && (
-        <div className="modal-backdrop" role="presentation">
-          <div className="modal-panel" role="dialog" aria-modal="true" aria-label="Edit user">
-            <div className="modal-heading">
-              <h2>Edit User</h2>
-              <button className="icon-button" type="button" onClick={() => setEditingUser(null)} aria-label="Close user form">x</button>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" role="presentation">
+          <div className="bg-white dark:bg-slate-800 w-full max-w-2xl rounded-lg shadow-lg overflow-hidden" role="dialog" aria-modal="true" aria-label="Edit user">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100">Edit User</h2>
+              <button className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" type="button" onClick={() => setEditingUser(null)} aria-label="Close user form">×</button>
             </div>
-            <form className="form-grid single-column" onSubmit={handleEdit}>
-              <label>Name<input name="name" defaultValue={editingUser.name} required /></label>
-              <label>Email<input name="email" type="email" defaultValue={editingUser.email} required /></label>
-              <label>Phone<input name="phone" defaultValue={editingUser.phone} required /></label>
-              <label>
-                Role
-                <select name="role" defaultValue={editingUser.role}>
+            <form className="px-6 py-5 grid gap-4" onSubmit={handleEdit}>
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Name</span>
+                <input name="name" defaultValue={editingUser.name} required className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none" />
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Email</span>
+                <input name="email" type="email" defaultValue={editingUser.email} required className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none" />
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Phone</span>
+                <input name="phone" defaultValue={editingUser.phone} required className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none" />
+              </label>
+
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Role</span>
+                <select name="role" defaultValue={editingUser.role} className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-sky-500 focus:outline-none">
                   <option value="customer">Customer</option>
                   <option value="vendor">Vendor</option>
                   <option value="admin">Admin</option>
                 </select>
               </label>
-              <label>
-                Status
-                <select name="status" defaultValue={editingUser.status || 'active'}>
+
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Status</span>
+                <select name="status" defaultValue={editingUser.status || 'active'} className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-sky-500 focus:outline-none">
                   <option value="active">Active</option>
                   <option value="suspended">Suspended</option>
                 </select>
               </label>
-              <label>New Password<input name="password" type="password" placeholder="Leave blank to keep current password" /></label>
-              <button className="btn btn-dark" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save User'}</button>
+
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">New Password</span>
+                <input name="password" type="password" placeholder="Leave blank to keep current password" className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-sky-500 focus:outline-none" />
+              </label>
+
+              <div className="pt-2">
+                <button className="inline-flex items-center justify-center rounded-md bg-slate-900 text-white px-4 py-2 text-sm hover:bg-slate-800 disabled:opacity-60" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save User'}</button>
+              </div>
             </form>
           </div>
         </div>

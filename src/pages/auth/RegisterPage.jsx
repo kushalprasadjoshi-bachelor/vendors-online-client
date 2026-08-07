@@ -59,7 +59,7 @@ const RegisterPage = () => {
             <label>Store Name<span><Store size={18} /><input name="storeName" required placeholder="Your shop name" /></span></label>
           )}
           <label>Password<span><LockKeyhole size={18} /><input name="password" type="password" required placeholder="Create password" /></span></label>
-          <button className="btn btn-dark wide" type="submit">Create Account <ArrowRight size={19} /></button>
+          <button className="btn btn-dark wide" type="submit"><span className="flex items-center justify-center gap-2">Create Account <ArrowRight size={19} /></span></button>
         </form>
         <p className="auth-switch">Already registered? <Link to={routes.login}>Login</Link></p>
       </section>

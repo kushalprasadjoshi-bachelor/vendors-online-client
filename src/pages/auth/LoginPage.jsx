@@ -62,7 +62,7 @@ const LoginPage = () => {
             Password
             <span><LockKeyhole size={18} /><input name="password" type="password" required defaultValue="password123" /></span>
           </label>
-          <button className="btn btn-dark wide" type="submit">Login <ArrowRight size={19} /></button>
+          <button className="btn btn-dark wide" type="submit"><span style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'}}>Login <ArrowRight size={19} /></span></button>
         </form>
         <p className="auth-switch">New here? <Link to={routes.register}>Create an account</Link></p>
       </section>

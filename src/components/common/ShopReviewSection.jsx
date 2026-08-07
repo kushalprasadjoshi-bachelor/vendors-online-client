@@ -75,26 +75,41 @@ const ShopReviewSection = ({ shop }) => {
       </div>
 
       {modalOpen && (
-        <div className="modal-backdrop" role="presentation">
-          <div className="modal-panel" role="dialog" aria-modal="true" aria-label="Write shop review">
-            <div className="modal-heading">
-              <h2>Review {shop.name}</h2>
-              <button className="icon-button" type="button" onClick={() => setModalOpen(false)} aria-label="Close review form">x</button>
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4" role="presentation">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-black/10" role="dialog" aria-modal="true" aria-label="Write shop review">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Review {shop.name}</h2>
+              <button className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200" type="button" onClick={() => setModalOpen(false)} aria-label="Close review form">x</button>
             </div>
-            <form className="form-grid single-column" onSubmit={handleSubmit}>
-              <label>
-                Rating
-                <select name="rating" defaultValue="5" required>
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Rating</label>
+                <select
+                  name="rating"
+                  defaultValue="5"
+                  required
+                  className="mt-2 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                >
                   {[5, 4, 3, 2, 1].map((rating) => (
                     <option value={rating} key={rating}>{rating} stars</option>
                   ))}
                 </select>
-              </label>
-              <label className="full">
-                Comment
-                <textarea name="comment" rows={4} required placeholder="Share your experience" />
-              </label>
-              <button className="btn btn-dark" type="submit" disabled={submitting}>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Comment</label>
+                <textarea
+                  name="comment"
+                  rows={4}
+                  required
+                  placeholder="Share your experience"
+                  className="mt-2 block w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                />
+              </div>
+              <button
+                className="inline-flex w-full justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
+                type="submit"
+                disabled={submitting}
+              >
                 {submitting ? 'Submitting...' : 'Submit Review'}
               </button>
             </form>

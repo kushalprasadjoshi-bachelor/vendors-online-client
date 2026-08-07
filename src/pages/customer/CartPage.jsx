@@ -1,11 +1,12 @@
 import { ArrowRight, Minus, Plus, Tag, Trash2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Breadcrumbs from '../../components/common/Breadcrumbs'
 import { routes } from '../../config/routes'
 import { useCart } from '../../plugins/cartContext'
 import { currency } from '../../utils/formatters'
 
 const CartPage = () => {
+  const navigate = useNavigate()
   const { items, lineKey, removeFromCart, summary, updateQuantity } = useCart()
 
   return (
@@ -17,7 +18,9 @@ const CartPage = () => {
         <div className="empty-state">
           <h2>Your cart is empty</h2>
           <p>Browse local vendors and add products before checkout.</p>
-          <Link className="btn btn-dark" to={routes.stores}>Browse Stores</Link>
+          <button className="btn btn-dark" type="button" onClick={() => navigate(routes.stores)}>
+            Browse Stores
+          </button>
         </div>
       ) : (
         <div className="cart-layout">
