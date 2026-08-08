@@ -24,6 +24,7 @@ import SearchPage from "./pages/customer/SearchPage";
 import AllProductsPage from "./pages/customer/AllProductsPage";
 import StoreProductsPage from "./pages/customer/StoreProductsPage";
 import StoresPage from "./pages/customer/StoresPage";
+import ProfilePage from "./pages/customer/ProfilePage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="search" element={<SearchPage />} />
+          <Route path="profile" element={<ProfilePage />} />
           <Route path="products" element={<AllProductsPage />} />
         </Route>
 
@@ -64,7 +66,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
 export default App;

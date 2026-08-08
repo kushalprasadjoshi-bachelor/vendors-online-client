@@ -35,8 +35,9 @@ const normalizeReview = (item) => ({
 const mapProduct = (item) =>
   createProductDto({
     id: item._id || item.id,
-    storeId: item.shopId,
-    storeSlug: item.shopId,
+    storeId: item.shopId?._id || item.shopId,
+    storeName: item.shopId?.name || "",
+    storeSlug: item.shopId?._id || item.shopId,
     name: item.name,
     slug: item._id || item.id,
     category: item.category || "General",

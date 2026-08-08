@@ -84,7 +84,8 @@ const VendorProductsPage = () => {
 
   const handleImageUpload = async (event) => {
     const images = await filesToDataUrls(event.target.files);
-    if (images.length) updateForm("images", images);
+    if (images.length)
+      updateForm("images", [...(productForm.images || []), ...images]);
   };
 
   const handleSubmit = async (event) => {
@@ -371,13 +372,27 @@ const VendorProductsPage = () => {
               </label>
               {productForm.images.length > 0 && (
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {productForm.images.map((imageUrl) => (
-                    <img
-                      src={imageUrl}
-                      alt=""
-                      key={imageUrl}
-                      className="h-24 w-full rounded-md object-cover"
-                    />
+                  {productForm.images.map((imageUrl, idx) => (
+                    <div key={imageUrl + idx} className="relative">
+                      <img
+                        src={imageUrl}
+                        alt=""
+                        className="h-24 w-full rounded-md object-cover"
+                      />
+                      <button
+                        type="button"
+                        aria-label="Remove image"
+                        className="absolute right-1 top-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-slate-700 shadow"
+                        onClick={() =>
+                          updateForm(
+                            "images",
+                            productForm.images.filter((_, i) => i !== idx),
+                          )
+                        }
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}

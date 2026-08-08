@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import Breadcrumbs from "../../components/common/Breadcrumbs";
 import ProductCard from "../../components/common/ProductCard";
 import SectionHeader from "../../components/common/SectionHeader";
+import FAQ from "../../components/common/FAQ";
 import Stars from "../../components/common/Stars";
 import { routes, storePath } from "../../config/routes";
 import { useAuth } from "../../plugins/authContext";
@@ -29,6 +30,7 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState("reviews");
   const { user } = useAuth();
   const { addToCart } = useCart();
 
@@ -89,6 +91,20 @@ const ProductDetailPage = () => {
     if (!product || !product.discountPercent) return null;
     return `-${product.discountPercent}%`;
   }, [product]);
+
+  const nextImage = () => {
+    if (!product || !product.images || product.images.length === 0) return;
+    const idx = product.images.indexOf(image);
+    const next = idx === -1 || idx === product.images.length - 1 ? 0 : idx + 1;
+    setImage(product.images[next]);
+  };
+
+  const prevImage = () => {
+    if (!product || !product.images || product.images.length === 0) return;
+    const idx = product.images.indexOf(image);
+    const prev = idx <= 0 ? product.images.length - 1 : idx - 1;
+    setImage(product.images[prev]);
+  };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -170,8 +186,40 @@ const ProductDetailPage = () => {
               </button>
             ))}
           </div>
-          <div className="main-product-image">
+          <div className="main-product-image" style={{ position: "relative" }}>
             <img src={image} alt={product.name} />
+            <button
+              type="button"
+              aria-label="Previous image"
+              onClick={prevImage}
+              style={{
+                position: "absolute",
+                left: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "rgba(255,255,255,0.8)",
+                borderRadius: 999,
+                padding: "8px",
+              }}
+            >
+              &lt;
+            </button>
+            <button
+              type="button"
+              aria-label="Next image"
+              onClick={nextImage}
+              style={{
+                position: "absolute",
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "rgba(255,255,255,0.8)",
+                borderRadius: 999,
+                padding: "8px",
+              }}
+            >
+              &gt;
+            </button>
           </div>
         </div>
 
@@ -251,54 +299,97 @@ const ProductDetailPage = () => {
       </div>
 
       <div className="product-tabs" role="tablist" aria-label="Product content">
-        <button type="button">Product Details</button>
-        <button className="active" type="button">
+        <button
+          type="button"
+          className={activeTab === "details" ? "active" : ""}
+          onClick={() => setActiveTab("details")}
+        >
+          Product Details
+        </button>
+        <button
+          type="button"
+          className={activeTab === "reviews" ? "active" : ""}
+          onClick={() => setActiveTab("reviews")}
+        >
           Rating & Reviews
         </button>
-        <button type="button">FAQs</button>
+        <button
+          type="button"
+          className={activeTab === "faqs" ? "active" : ""}
+          onClick={() => setActiveTab("faqs")}
+        >
+          FAQs
+        </button>
       </div>
 
-      <section className="reviews-section">
-        <SectionHeader
-          title={`All Reviews (${productReviews.length})`}
-          action={
-            <div className="review-actions">
-              <button
-                className="icon-button"
-                type="button"
-                aria-label="Filter reviews"
-              >
-                <SlidersHorizontal size={18} />
-              </button>
-              <button className="sort-button" type="button">
-                Latest
-              </button>
-              <button
-                className="btn btn-dark"
-                type="button"
-                onClick={() => setReviewOpen(true)}
-              >
-                Write a Review
-              </button>
+      {activeTab === "details" && (
+        <section className="page-section">
+          <SectionHeader title="Product Information" />
+          <div className="form-panel" style={{ padding: 24 }}>
+            <p>{product.description}</p>
+            <div style={{ display: "flex", gap: 20, marginTop: 12 }}>
+              <div>
+                <strong>Category</strong>
+                <div className="muted-line">{product.category}</div>
+              </div>
+              <div>
+                <strong>Vendor</strong>
+                <div className="muted-line">{store.name}</div>
+              </div>
+              <div>
+                <strong>Availability</strong>
+                <div className="muted-line">
+                  {product.stock > 0 ? "In stock" : "Out of stock"}
+                </div>
+              </div>
             </div>
-          }
-        />
-        <div className="reviews-grid">
-          {productReviews.map((review) => (
-            <article className="review-card" key={review.id}>
-              <Stars rating={review.rating} showValue={false} />
-              <h3>
-                {review.authorName || review.name} <CheckCircle size={16} />
-              </h3>
-              <p>"{review.comment}"</p>
-              <span>Posted on {dateLabel(review.createdAt)}</span>
-            </article>
-          ))}
-          {productReviews.length === 0 && (
-            <p className="muted-line">No product reviews yet.</p>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
+
+      {activeTab === "reviews" && (
+        <section className="reviews-section">
+          <SectionHeader
+            title={`All Reviews (${productReviews.length})`}
+            action={
+              <div className="review-actions">
+                <button
+                  className="icon-button"
+                  type="button"
+                  aria-label="Filter reviews"
+                >
+                  <SlidersHorizontal size={18} />
+                </button>
+                <button className="sort-button" type="button">
+                  Latest
+                </button>
+                <button
+                  className="btn btn-dark"
+                  type="button"
+                  onClick={() => setReviewOpen(true)}
+                >
+                  Write a Review
+                </button>
+              </div>
+            }
+          />
+          <div className="reviews-grid">
+            {productReviews.map((review) => (
+              <article className="review-card" key={review.id}>
+                <Stars rating={review.rating} showValue={false} />
+                <h3>
+                  {review.authorName || review.name} <CheckCircle size={16} />
+                </h3>
+                <p>"{review.comment}"</p>
+                <span>Posted on {dateLabel(review.createdAt)}</span>
+              </article>
+            ))}
+            {productReviews.length === 0 && (
+              <p className="muted-line">No product reviews yet.</p>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="page-section">
         <SectionHeader title="You might also like" />
@@ -308,6 +399,26 @@ const ProductDetailPage = () => {
           ))}
         </div>
       </section>
+
+      {activeTab === "faqs" && (
+        <section className="page-section">
+          <SectionHeader title="FAQs" />
+          <div className="form-panel" style={{ padding: 24 }}>
+            <FAQ
+              items={[
+                {
+                  q: "What is the return policy?",
+                  a: "Returns accepted within 7 days for unused items.",
+                },
+                {
+                  q: "How long does delivery take?",
+                  a: "Delivery time depends on your location; typically 2-5 business days.",
+                },
+              ]}
+            />
+          </div>
+        </section>
+      )}
 
       {reviewOpen && (
         <div
@@ -360,7 +471,8 @@ const ProductDetailPage = () => {
                   rows={4}
                   required
                   placeholder="Share your experience"
-                  className="min-h-[140px] w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+                  style={{ minHeight: 140 }}
                 />
               </div>
               <button

@@ -29,6 +29,7 @@ const Navbar = () => {
   const { count } = useCart();
   const [promoVisible, setPromoVisible] = useState(true);
   const [categories, setCategories] = useState([]);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,25 @@ const Navbar = () => {
       .getCategories()
       .then((items) => setCategories(items.filter(Boolean)))
       .catch(() => setCategories([]));
+  }, []);
+
+  // close categories dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      const path = e.composedPath ? e.composedPath() : [];
+      if (
+        !path.some(
+          (el) =>
+            el.classList &&
+            el.classList.contains &&
+            el.classList.contains("categories-root"),
+        )
+      ) {
+        setCategoriesOpen(false);
+      }
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
   }, []);
 
   const handleSearch = (event) => {
@@ -92,21 +112,26 @@ const Navbar = () => {
         <div className="hidden items-center gap-4 lg:flex">
           {storefrontNav.map((item) =>
             item.label === "Categories" ? (
-              <div className="relative group" key={item.label}>
-                <NavLink
+              <div className="relative categories-root" key={item.label}>
+                <button
+                  type="button"
                   className="inline-flex items-center gap-1 text-sm font-bold text-slate-900 transition hover:text-slate-900"
-                  to={item.path}
+                  onClick={() => setCategoriesOpen((s) => !s)}
+                  aria-expanded={categoriesOpen}
                 >
                   <span>{item.label}</span>
                   <ChevronDown size={16} aria-hidden="true" />
-                </NavLink>
-                <div className="absolute left-0 top-full z-20 mt-2 w-56 rounded-xl border border-slate-200 bg-white py-2 shadow-lg opacity-0 invisible transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                </button>
+                <div
+                  className={`absolute left-0 top-full z-40 mt-2 w-56 rounded-xl border border-slate-200 bg-white py-2 shadow-lg ${categoriesOpen ? "visible opacity-100" : "invisible opacity-0"} transition-all duration-150`}
+                >
                   {categories.length > 0 ? (
                     categories.map((category) => (
                       <NavLink
                         key={category}
                         className="block px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
                         to={`${routes.stores}?category=${encodeURIComponent(category)}`}
+                        onClick={() => setCategoriesOpen(false)}
                       >
                         {category}
                       </NavLink>
@@ -121,8 +146,12 @@ const Navbar = () => {
             ) : (
               <NavLink
                 key={item.label}
-                className="text-sm font-bold text-slate-900 transition hover:text-slate-900"
                 to={item.path}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-sm font-bold text-slate-900 transition"
+                    : "text-sm text-slate-700 hover:text-slate-900 transition"
+                }
               >
                 <span>{item.label}</span>
               </NavLink>
@@ -151,7 +180,7 @@ const Navbar = () => {
           >
             <ShoppingCart size={26} />
             {count > 0 && (
-              <span className="absolute -right-1 -top-1 inline-flex min-h-[1.25rem] min-w-[1.25rem] items-center justify-center rounded-full bg-black px-1.5 text-[0.65rem] font-semibold text-white">
+              <span className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-black px-1.5 text-[0.65rem] font-semibold text-white">
                 {count}
               </span>
             )}
@@ -191,6 +220,14 @@ const Navbar = () => {
                         >
                           <ReceiptText size={16} />
                           My Orders
+                        </NavLink>
+                        <NavLink
+                          className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+                          to={routes.profile}
+                          onClick={() => setAccountOpen(false)}
+                        >
+                          <UserCircle size={16} />
+                          Profile
                         </NavLink>
                         <NavLink
                           className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
