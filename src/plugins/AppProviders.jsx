@@ -4,6 +4,7 @@ import { authService } from "../services/authService";
 import { storage } from "../utils/storage";
 import { AuthContext } from "./authContext";
 import { CartContext } from "./cartContext";
+import { ToastProvider } from "./toastContext";
 import { apiClient } from "../services/apiClient";
 
 const cartKey = "vendors_online_cart";
@@ -115,9 +116,13 @@ const AppProviders = ({ children }) => {
   );
 
   return (
-    <AuthContext.Provider value={authValue}>
-      <CartContext.Provider value={cartValue}>{children}</CartContext.Provider>
-    </AuthContext.Provider>
+    <ToastProvider>
+      <AuthContext.Provider value={authValue}>
+        <CartContext.Provider value={cartValue}>
+          {children}
+        </CartContext.Provider>
+      </AuthContext.Provider>
+    </ToastProvider>
   );
 };
 

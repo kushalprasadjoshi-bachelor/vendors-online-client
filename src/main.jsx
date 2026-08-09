@@ -1,23 +1,25 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import AppProviders from './plugins/AppProviders.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.jsx";
+import AppProviders from "./plugins/AppProviders.jsx";
+import Toast from "./components/common/Toast.jsx";
 
 // Mantine
-import { MantineProvider } from '@mantine/core'
-import '@mantine/core/styles.css';
+import { MantineProvider } from "@mantine/core";
+import "@mantine/core/styles.css";
 
 // Bootstrap
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <MantineProvider>
       <AppProviders>
         <App />
+        <Toast />
       </AppProviders>
     </MantineProvider>
   </StrictMode>,
-)
+);

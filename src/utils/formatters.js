@@ -7,6 +7,11 @@ export const currency = (value) => {
   return `Rs. ${formatted}`;
 };
 
+export const formatRating = (value) => {
+  const num = Number(value || 0);
+  return num.toFixed(2);
+};
+
 export const numberCompact = (value) =>
   new Intl.NumberFormat("en-US", {
     notation: "compact",

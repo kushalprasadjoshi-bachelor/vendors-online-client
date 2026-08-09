@@ -9,6 +9,7 @@ import Stars from "../../components/common/Stars";
 import { routes, storePath } from "../../config/routes";
 import { useAuth } from "../../plugins/authContext";
 import { useCart } from "../../plugins/cartContext";
+import { useToast } from "../../plugins/toastContext";
 import { catalogService } from "../../services/catalogService";
 import { currency, dateLabel } from "../../utils/formatters";
 
@@ -33,6 +34,7 @@ const ProductDetailPage = () => {
   const [activeTab, setActiveTab] = useState("reviews");
   const { user } = useAuth();
   const { addToCart } = useCart();
+  const { success: showSuccessToast, error: showErrorToast } = useToast();
 
   const refreshReviews = async (productId) => {
     const reviews = await catalogService.getProductReviews(productId);
@@ -59,7 +61,7 @@ const ProductDetailPage = () => {
           const colorsList =
             prod.colors && prod.colors.length
               ? prod.colors
-              : ["#000000", "#2563EB", "#EF4444"];
+              : ["#000000", "#333333", "#EF4444"];
           const sizesList =
             prod.sizes && prod.sizes.length
               ? prod.sizes
@@ -123,7 +125,7 @@ const ProductDetailPage = () => {
   const handleReviewSubmit = async (event) => {
     event.preventDefault();
     if (!user) {
-      alert("Please login to write a product review.");
+      showErrorToast("Please login to write a product review.");
       return;
     }
 
@@ -137,8 +139,9 @@ const ProductDetailPage = () => {
       setReviewOpen(false);
       event.currentTarget.reset();
       await refreshReviews(product.id);
+      showSuccessToast("Review submitted successfully!");
     } catch (error) {
-      alert(error.message || "Failed to submit review");
+      showErrorToast(error.message || "Failed to submit review");
     } finally {
       setReviewSubmitting(false);
     }
@@ -155,7 +158,7 @@ const ProductDetailPage = () => {
   const colorsList =
     product.colors && product.colors.length
       ? product.colors
-      : ["#000000", "#2563EB", "#EF4444"];
+      : ["#000000", "#333333", "#EF4444"];
   const sizesList =
     product.sizes && product.sizes.length
       ? product.sizes

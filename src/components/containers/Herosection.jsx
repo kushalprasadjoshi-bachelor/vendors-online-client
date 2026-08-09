@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../config/routes";
 import { catalogService } from "../../services/catalogService";
 import { numberCompact } from "../../utils/formatters";
+import happyCoupleImage from "../../assets/happy-couple-after-successful-shopping.jpg";
 
 const Herosection = () => {
   const [stats, setStats] = useState({ vendors: 0, products: 0, customers: 0 });
@@ -53,8 +54,8 @@ const Herosection = () => {
 
       <div className="hero-media">
         <img
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80"
-          alt="Customers shopping in a storefront"
+          src={happyCoupleImage}
+          alt="Happy customers after successful shopping"
         />
       </div>
     </section>
