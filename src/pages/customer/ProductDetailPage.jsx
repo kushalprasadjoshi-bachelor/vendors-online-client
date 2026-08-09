@@ -391,15 +391,6 @@ const ProductDetailPage = () => {
         </section>
       )}
 
-      <section className="page-section">
-        <SectionHeader title="You might also like" />
-        <div className="product-grid compact-grid">
-          {related.map((item) => (
-            <ProductCard product={item} key={item.id} />
-          ))}
-        </div>
-      </section>
-
       {activeTab === "faqs" && (
         <section className="page-section">
           <SectionHeader title="FAQs" />
@@ -419,6 +410,15 @@ const ProductDetailPage = () => {
           </div>
         </section>
       )}
+
+      <section className="page-section">
+        <SectionHeader title="You might also like" />
+        <div className="product-grid compact-grid">
+          {related.map((item) => (
+            <ProductCard product={item} key={item.id} />
+          ))}
+        </div>
+      </section>
 
       {reviewOpen && (
         <div

@@ -15,6 +15,8 @@ const AllProductsPage = () => {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const category = searchParams.get('category') || ''
   const sort = searchParams.get('sort') || 'latest'
@@ -23,7 +25,9 @@ const AllProductsPage = () => {
   const maxPrice = searchParams.get('maxPrice') || ''
 
   useEffect(() => {
-    catalogService.getCategories().then(setCategories).catch(() => setCategories([]))
+    catalogService.getCategories()
+      .then((data) => setCategories(Array.isArray(data) ? data : data?.categories || []))
+      .catch(() => setCategories([]))
   }, [])
 
   useEffect(() => {
@@ -31,7 +35,21 @@ const AllProductsPage = () => {
     if (category) params.category = category
     if (onSale) params.onSale = 'true'
 
-    catalogService.getProducts(null, params).then(setProducts).catch(console.error)
+    setLoading(true)
+    setError('')
+
+    catalogService.getProducts(params)
+      .then((data) => {
+        const result = Array.isArray(data) ? data : data?.products || data?.items || []
+        setProducts(result)
+      })
+      .catch((err) => {
+        console.error(err)
+        setProducts([])
+        setError('Unable to load products.')
+      })
+      .finally(() => setLoading(false))
+
     setPage(1)
   }, [category, onSale, sort])
 
@@ -103,9 +121,11 @@ const AllProductsPage = () => {
             )}
           />
           <div className="product-grid">
-            {visibleProducts.map((product) => <ProductCard product={product} key={product.id} />)}
+            {loading && <p className="muted-line">Loading products...</p>}
+            {!loading && visibleProducts.map((product) => <ProductCard product={product} key={product.id} />)}
           </div>
-          {visibleProducts.length === 0 && <p className="muted-line">No products match those filters.</p>}
+          {!loading && error && <p className="muted-line">{error}</p>}
+          {!loading && !error && visibleProducts.length === 0 && <p className="muted-line">No products match those filters.</p>}
           <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       </div>

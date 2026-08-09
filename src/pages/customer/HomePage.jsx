@@ -1,29 +1,36 @@
-import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import Herosection from '../../components/containers/Herosection'
-import ProductCard from '../../components/common/ProductCard'
-import SectionHeader from '../../components/common/SectionHeader'
-import Stars from '../../components/common/Stars'
-import StoreCard from '../../components/common/StoreCard'
-import { routes } from '../../config/routes'
-import { locations, testimonials } from '../../data/mockData'
-import { catalogService } from '../../services/catalogService'
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Herosection from "../../components/containers/Herosection";
+import ProductCard from "../../components/common/ProductCard";
+import SectionHeader from "../../components/common/SectionHeader";
+import Stars from "../../components/common/Stars";
+import StoreCard from "../../components/common/StoreCard";
+import { routes } from "../../config/routes";
+import { locations, testimonials } from "../../data/mockData";
+import { catalogService } from "../../services/catalogService";
 
 const HomePage = () => {
-  const [featuredProducts, setFeaturedProducts] = useState([])
-  const [featuredStores, setFeaturedStores] = useState([])
-  const [websiteReviews, setWebsiteReviews] = useState(testimonials)
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [featuredStores, setFeaturedStores] = useState([]);
+  const [websiteReviews, setWebsiteReviews] = useState(testimonials);
 
   useEffect(() => {
-    catalogService.getProducts().then((prods) => setFeaturedProducts(prods.slice(0, 4))).catch(console.error)
-    catalogService.getStores().then((sts) => setFeaturedStores(sts.slice(0, 4))).catch(console.error)
-    catalogService.getWebsiteReviews()
+    catalogService
+      .getProducts()
+      .then((prods) => setFeaturedProducts(prods.slice(0, 4)))
+      .catch(console.error);
+    catalogService
+      .getStores()
+      .then((sts) => setFeaturedStores(sts.slice(0, 4)))
+      .catch(console.error);
+    catalogService
+      .getWebsiteReviews()
       .then((reviews) => {
-        if (reviews.length) setWebsiteReviews(reviews.slice(0, 3))
+        if (reviews.length) setWebsiteReviews(reviews.slice(0, 3));
       })
-      .catch(console.error)
-  }, [])
+      .catch(console.error);
+  }, []);
 
   return (
     <>
@@ -36,20 +43,32 @@ const HomePage = () => {
       <section className="container-shell page-section">
         <SectionHeader
           title="BUY PRODUCTS"
-          action={<Link className="pill-link" to={routes.products}>View All</Link>}
+          action={
+            <Link className="pill-link" to={routes.products}>
+              View All
+            </Link>
+          }
         />
         <div className="product-grid compact-grid">
-          {featuredProducts.map((product) => <ProductCard product={product} key={product.id} />)}
+          {featuredProducts.map((product) => (
+            <ProductCard product={product} key={product.id} />
+          ))}
         </div>
       </section>
 
       <section className="container-shell page-section">
         <SectionHeader
           title="VISIT STORES"
-          action={<Link className="pill-link" to={routes.stores}>View All</Link>}
+          action={
+            <Link className="pill-link" to={routes.stores}>
+              View All
+            </Link>
+          }
         />
         <div className="store-grid compact-grid">
-          {featuredStores.map((store) => <StoreCard store={store} key={store.id} />)}
+          {featuredStores.map((store) => (
+            <StoreCard store={store} key={store.id} />
+          ))}
         </div>
       </section>
 
@@ -63,7 +82,11 @@ const HomePage = () => {
                 to={`${routes.stores}?location=${encodeURIComponent(location.name)}`}
                 key={location.name}
               >
-                <img src={location.imageUrl} alt={location.name} loading="lazy" />
+                <img
+                  src={location.imageUrl}
+                  alt={location.name}
+                  loading="lazy"
+                />
                 <span>{location.name}</span>
               </Link>
             ))}
@@ -74,12 +97,13 @@ const HomePage = () => {
       <section className="container-shell page-section">
         <SectionHeader
           title="OUR HAPPY CUSTOMERS"
-          action={(
+          action={
             <div className="arrow-actions" aria-label="Testimonials navigation">
-              <button type="button" aria-label="Previous testimonial"><ArrowLeft size={18} /></button>
-              <button type="button" aria-label="Next testimonial"><ArrowRight size={18} /></button>
+              <Link className="pill-link" to={routes.reviewForm}>
+                Write a Review
+              </Link>
             </div>
-          )}
+          }
         />
         <div className="testimonial-row">
           {websiteReviews.map((testimonial) => (
@@ -89,14 +113,14 @@ const HomePage = () => {
               <p>"{testimonial.comment}"</p>
             </article>
           ))}
-          <Link className="review-card testimonial-link" to={routes.stores}>
-            <span>Explore stores</span>
+          <Link className="review-card testimonial-link" to={routes.reviews}>
+            <span>View All Reviews</span>
             <ArrowRight size={20} />
           </Link>
         </div>
       </section>
     </>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

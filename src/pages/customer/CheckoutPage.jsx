@@ -49,7 +49,11 @@ const CheckoutPage = () => {
             <span>Delivery OTP</span>
             <strong>{createdOrder.otpCode}</strong>
           </div>
-          <Link className="btn btn-dark" to={routes.orders}>
+          <Link
+            className="btn btn-dark"
+            to={routes.orders}
+            style={{ display: "inline-flex", justifyContent: "center", alignItems: "center" }}
+          >
             View Orders
           </Link>
         </div>
